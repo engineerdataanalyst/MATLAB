@@ -1,0 +1,14 @@
+function fix_sym
+  sympref('HeavisideAtOrigin', 1);
+  sympref('AbbreviateOutput', false);
+  warning('off', 'symbolic:sym:sym:DeprecateExpressions');
+  warning('off', 'symbolic:solve:DeprecateStringInputWarning');  
+  warning('off', 'MATLAB:dispatcher:nameConflict');
+  warning('off', 'symbolic:limit:CouldNotAttachProperty');
+  warning('off', 'symbolic:sym:sym:AssumptionsOnConstantsIgnored');
+  warning('off', 'MATLAB:fplot:TwoOutputsDeprecated');
+  warning('off', 'symbolic:generate:UnitsNotSupportedMakeConsistent');
+  warning('off', 'symbolic:generate:UnitsNotSupported');
+  warning('off', 'MATLAB:table:ModifiedAndSavedVarnames');
+  warning('off', 'MATLAB:table:ModifiedVarnames');
+  warning('off', 'MATLAB:xlswrite:AddSheet');
