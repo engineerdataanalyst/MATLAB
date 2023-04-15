@@ -1,7 +1,9 @@
 classdef ig
-  % -------------------
-  % the ideal gas class
-  % -------------------
+  % =
+  % ---------------------
+  % - the ideal gas class
+  % ---------------------
+  % =
   properties (SetAccess = private)
     name;
     chemical_formula;
