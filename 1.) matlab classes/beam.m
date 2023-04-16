@@ -24,10 +24,7 @@ classdef beam
       % - the beam constructor
       % ----------------------
       
-      % -------------------------
-      % check the input arguments
-      % -------------------------
-      % check the argument classes
+      %% check the argument classes
       arguments
         what ...
         {mustBeTextScalar, ...
@@ -60,7 +57,7 @@ classdef beam
       if nargin == 0
         return;
       end
-      % construct the beam object
+      %% construct the beam object
       switch what
         case "cantilever"
           R = sym('R');
@@ -159,7 +156,7 @@ classdef beam
       % - sets the load table
       % ---------------------
       
-      % check for wrong variable names
+      %% check for wrong variable names
       varnames = beam.load_varnames.';
       if ~istable(rhs) || ~isperm(rhs.Properties.VariableNames, varnames)
         str = stack('''load'' property must be a table', ...
@@ -190,7 +187,7 @@ classdef beam
                     'with dimensions [height(load) x 2]');
         error(str);
       end
-      % check for wrong categories
+      %% check for wrong categories
       if ~isprotected(rhs.class) || ~isprotected(rhs.type) || ...
           isordinal(rhs.class) || isordinal(rhs.type)
         str = stack('''class'' and ''type'' variables', ...
@@ -216,7 +213,7 @@ classdef beam
                     '2.) ''moment''');
         error(str);
       end
-      % check for <undefined> categories
+      %% check for <undefined> categories
       if any(isundefined(rhs.class) | isundefined(rhs.type))
         str = stack('''class'' and ''type'' variables', ...
                     'must not have ''<undefined>'' values');
@@ -264,7 +261,7 @@ classdef beam
       % - add loads to the beam
       % -----------------------
       
-      % check the input arguments
+      %% check the input arguments
       arguments
         b;
         class ...
@@ -277,7 +274,7 @@ classdef beam
         distance;
         ends (1,2) logical = default_ends(class);
       end
-      % add the loads to the beam
+      %% add the loads to the beam
       class = lower(class);
       type = lower(type);
       magnitude = array2symstr(magnitude);
@@ -292,9 +289,7 @@ classdef beam
       %   of symbolc arrays
       % -------------------------------
       
-      % -------------------------
-      % check the input arguments
-      % -------------------------
+      %% check the input arguments
       % check the argument classes
       arguments
         b;
@@ -304,9 +299,7 @@ classdef beam
       end
       % check the conversion mode
       Mode = lower(options.Mode);
-      % -------------------------
-      % case for non-scalar beams
-      % -------------------------
+      %% case for non-scalar beams
       if isempty(b)
         return;
       elseif ~isscalar(b)
@@ -315,7 +308,7 @@ classdef beam
         end
         return;
       end
-      % convert to cell arrays of symbolic arrays
+      %% convert to cell arrays of symbolic arrays
       switch Mode
         case "ignore"
           Args = {'ErrorHandler' @ignore_args 'UniformOutput' false};
@@ -334,9 +327,7 @@ classdef beam
       %   of symbolic character vectors
       % -------------------------------
       
-      % -------------------------
-      % check the input arguments
-      % -------------------------
+      %% check the input arguments
       % check the argument classes
       arguments
         b;
@@ -347,9 +338,7 @@ classdef beam
       % check the conversion mode
       Mode = lower(options.Mode);
 
-      % -------------------------
-      % case for non-scalar beams
-      % -------------------------
+      %% case for non-scalar beams
       if isempty(b)
         return;
       elseif ~isscalar(b)
@@ -358,7 +347,7 @@ classdef beam
         end
         return;
       end
-      % convert to cell arrays of symbolic character vectors
+      %% convert to cell arrays of symbolic character vectors
       switch Mode
         case "ignore"
           Args = {'ErrorHandler' @ignore_args 'UniformOutput' false};
@@ -378,9 +367,7 @@ classdef beam
       %   load table to string arrays
       % -------------------------------
       
-      % -------------------------
-      % check the input arguments
-      % -------------------------
+      %% check the input arguments
       % check the argument classes
       arguments
         b;
@@ -390,10 +377,7 @@ classdef beam
       end
       % check the conversion mode
       Mode = lower(options.Mode);
-
-      % -------------------------
-      % case for non-scalar beams
-      % -------------------------
+      %% case for non-scalar beams
       if isempty(b)
         return;
       elseif ~isscalar(b)
@@ -402,7 +386,7 @@ classdef beam
         end
         return;
       end
-      % convert to string arrays
+      %% convert to string arrays
       switch Mode
         case "ignore"
           Args = {'ErrorHandler' @ignore_args 'UniformOutput' false}; 
@@ -430,9 +414,7 @@ classdef beam
       %   value of the new beam length Lnew
       % ---------------------------------------
       
-      % -------------------------
-      % check the input arguments
-      % -------------------------
+      %% check the input arguments
       % check the argument classes
       arguments
         b;
@@ -446,9 +428,7 @@ classdef beam
       if ~checkUnits(sum(sym(Lnew)), 'Compatible')
         error('''Lnew'' must have compatible units');
       end
-      % -------------------------
-      % case for non-scalar beams
-      % -------------------------
+      %% case for non-scalar beams
       if isempty(b)
         return;
       elseif ~isscalar(b)
@@ -457,18 +437,18 @@ classdef beam
         end
         return;
       end
-      % convert the load distances to symbolic
+      %% convert the load distances to symbolic
       func = @(arg) isTextScalar(arg, ["char" "string" "cell of char"]);
       Args = {'ErrorHandler' @nan_args 'UniformOutput' false};
       uniform = Args(3:4);
       distance = cellfun(@array2sym, b.load.distance, Args{:});
       TextScalars = cellfun(func, b.load.distance);
-      % compute the load distance cell array locations
+      %% compute the load distance cell array locations
       func = @(arg) checkUnits(arg, 'Compatible');
       finite = cellfun(@isallfinite, b.load.distance);
       col = cellfun(@sum, convert2col(distance), uniform{:});
       compatible = cellfun(func, col);
-      % set the new beam length and new load distances
+      %% set the new beam length and new load distances
       if isAlways(Lnew > 0, 'Unknown', 'true')
         IAC = {'IgnoreAnalyticConstraints' true};
         new_distance = distance(finite & compatible);
@@ -490,9 +470,7 @@ classdef beam
       %   the beam distance variable 'x'
       % --------------------------------
       
-      % -------------------------
-      % check the input arguments
-      % -------------------------
+      %% check the input arguments
       % check the argument classes
       arguments
         b;
@@ -528,10 +506,7 @@ classdef beam
                     'with the same size as the beam');
         error(str);
       end
-
-      % -------------------------
-      % case for non-scalar beams
-      % -------------------------
+      %% case for non-scalar beams
       if isempty(b)
         [y dy m v w ra ha] = deal(sym.empty);
         [rs hs] = deal(struct.empty);
@@ -555,7 +530,7 @@ classdef beam
           end
         end
       end
-      % convert the load variables to cell arrays of symbolic arrays
+      %% convert the load variables to cell arrays of symbolic arrays
       b = b.convert2cellsym('Mode', 'nan');
       uniform = {'UniformOutput' false};
       b.load.magnitude = cellfun(@formula, b.load.magnitude, uniform{:});
@@ -564,9 +539,7 @@ classdef beam
       b.I = formula(b.I);
       b.L = formula(b.L);
       num_loads = height(b.load);
-      % ---------------------------
-      % compute these useful values
-      % ---------------------------
+      %% compute these useful values
       % frequrently used arrays
       IAC = {'IgnoreAnalyticConstraints' true};
       Full = {'FactorMode' 'full'};
@@ -624,9 +597,7 @@ classdef beam
       % symbolic variable cell array locations
       func = @issymvarmultiplescalar;
       symvarmultiplescalars = cellfun(func, magnitude);
-      % ------------------------------------
-      % inspect the magnitudes and distances
-      % ------------------------------------
+      %% inspect the magnitudes and distances
       % check the magnitudes of the reactions and hinges
       if any((reaction_loc | hinge_loc) & ~symvarmultiplescalars)
         str = stack('the magnitudes of the reactions and hinges', ...
@@ -662,9 +633,7 @@ classdef beam
                     'with no Inf or NaN values');
         error(str);
       end
-      % -------------------------------------
-      % inspect the beam length and distances
-      % -------------------------------------
+      %% inspect the beam length and distances
       % all distances must not contain 'x'
       for k = 1:2
         if k == 1
@@ -697,9 +666,7 @@ classdef beam
       if ~all(dl_in_range)
         error(str, b.L);
       end
-      % ------------------------------
-      % compute these necessary values
-      % ------------------------------
+      %% compute these necessary values
       % load distance matrix
       Args = {'Mode' 'pw' 'Var' x};
       matrix.dl = symunion(0, column.dl, b.L, ...
@@ -726,9 +693,7 @@ classdef beam
       rc_moment_loc = rc.type == 'moment';
       distance_equals_zero = isAlwaysError(rc.distance == 0, iA_str);
       zero_vals = zeros(num_beam_ranges-1, 1);
-      % -----------------
-      % inspect the loads
-      % -----------------
+      %% inspect the loads
       % internal hinges cannot have bending moments
       if any(hinge_loc & moment_loc)
         error('internal hinges cannot have bending moments');
@@ -821,9 +786,7 @@ classdef beam
       if ~beam.stable(num_reactions, num_hinges)
         error('the beam must be stable');
       end
-      % ---------------------------------------------
-      % compute the piecewise functions for the loads
-      % ---------------------------------------------
+      %% compute the piecewise functions for the loads
       % compute the distributed load formulas
       [fd md] = deal(repmat({sym(0)}, num_loads, 1));
       for k = find(distributed_loc).'
@@ -947,9 +910,7 @@ classdef beam
       m(x) = sum(m);
       v(x) = sum(v);
       w(x) = sum(w);
-      % ------------------------------
-      % compute the hinge force matrix
-      % ------------------------------
+      %% compute the hinge force matrix
       if any(rc_force_loc)
         loc = rc_force_loc & distance_equals_zero;
         left = [sum(rc.magnitude(loc)); zero_vals];
@@ -966,9 +927,7 @@ classdef beam
       end
       matrix.fh = [hinge.magnitude -hinge.magnitude].';
       matrix.fh = reshape([0; matrix.fh(:); 0], 2, []).'+frc;
-      % -------------------------------
-      % compute the hinge moment matrix
-      % -------------------------------
+      %% compute the hinge moment matrix
       if any(rc_moment_loc)
         loc = rc_moment_loc & distance_equals_zero;
         left = [sum(rc.magnitude(loc)); zero_vals];
@@ -984,9 +943,7 @@ classdef beam
         mrc = 0;
       end
       matrix.mh = matrix.fh.*matrix.db+mrc;
-      % -----------------------------------------------------
-      % statics (sum of forces and moments == 0 [+up]/[+ccw])
-      % -----------------------------------------------------
+      %% statics (sum of forces and moments == 0 [+up]/[+ccw])
       in_range = false(num_loads, 1);
       for k = 1:num_beam_ranges
         % -------------------------------
@@ -1085,9 +1042,7 @@ classdef beam
         moment_eqn = sum_mrc.force+sum_mrc.moment+sum_mh+sum_md == 0;
         eqn(2*k-1:2*k) = [force_eqn; moment_eqn];
       end
-      % ----------------------------------
-      % elastic curve (E*I*d^2y/dx^2 == M)
-      % ----------------------------------
+      %% elastic curve (E*I*d^2y/dx^2 == M)
       % compute the singularity functions for the elastic curve
       [y dy] = deal(sym.zeros(num_load_ranges, 1));
       [y_args dy_args] = deal(cell(2*num_load_ranges, 1));
@@ -1150,9 +1105,7 @@ classdef beam
       % compute the total elastic curve
       y(x) = piecewise(y_args{:});
       dy(x) = piecewise(dy_args{:});
-      % -------------------------------
-      % solve for the unknown variables
-      % -------------------------------
+      %% solve for the unknown variables
       % compute the solution
       soln = solve(eqn, unknowns);
       fields = fieldnames(soln);
@@ -1263,6 +1216,7 @@ classdef beam
       %   of the entire beam
       % ----------------------------
       
+      %% check the input arguments
       % check the argument classes
       arguments
         b;
@@ -1310,6 +1264,7 @@ classdef beam
                     'must have compatible dimensions');
         error(str);
       end
+      %% compute the strain energy
       % initialize the strain energy array
       IAC = {'IgnorEAnalyticConstraints' true};
       [b m x] = scalar_expand(b, m, x);
@@ -1374,6 +1329,7 @@ classdef beam
       %   R >= 0, H >= 0
       % ------------------------------------
       
+      %% check the input arguments
       % check the argument classes
       arguments
         R double {mustBeNonempty, mustBeInteger, mustBeNonnegative};
@@ -1383,7 +1339,7 @@ classdef beam
       if ~compatible_dims(R, H)
         error('input arguments must have compatible dimensions');
       end
-      % determine if the beam is stable
+      %% determine if the beam is stable
       lhs = R;
       rhs = H+1;
       bool = lhs >= rhs;
@@ -1403,6 +1359,7 @@ classdef beam
       %   R >= 0, H >= 0
       % ------------------------------------
       
+      %% check the input arguments
       % check the argument classes
       arguments
         R double {mustBeNonempty, mustBeInteger, mustBeNonnegative};
@@ -1412,7 +1369,7 @@ classdef beam
       if ~compatible_dims(R, H)
         error('input arguments must have compatible dimensions');
       end
-      % determine if the beam is statically determinate
+      %% determine if the beam is statically determinate
       lhs = {R R};
       rhs = {H+1 H+2};
       uniform = {'UniformOutput' false};
@@ -1425,6 +1382,7 @@ classdef beam
       %   the elastic_curve function
       % ----------------------------
       
+      %% check the input arguments
       % check the argument classes
       arguments
         func sym;
@@ -1446,7 +1404,7 @@ classdef beam
       if ~issymvarscalar(x)
         error('''x'' must be a symbolic variable scalar');
       end
-      % compute the range test value
+      %% compute the range test value
       IAC = {'IgnoreAnalyticConstraints' true};
       answer = subs(expression(func, num:num+1), x, x0);
       answer = simplify(answer(1)-answer(2), IAC{:});
@@ -1459,6 +1417,7 @@ classdef beam
       %   the moment of inertia abount the neutal axis (In),
       % -------------------------------------------------------
       
+      %% check the input arguments
       % check the argument classes
       arguments
         yc {mustBeA(yc, ["numeric" "sym"])};
@@ -1471,7 +1430,7 @@ classdef beam
         error('input arguments must have compatible dimensions');
       end
       symbolics = cellfun(@issym, Args);
-      % compute the neutral axis calculations
+      %% compute the neutral axis calculations
       yc_col = reshape(yc, [], 1);
       Ac_col = reshape(Ac, [], 1);
       yn = sum(yc_col.*Ac_col)/sum(Ac_col);
@@ -1490,6 +1449,7 @@ classdef beam
       %   about the neutral axis
       % -----------------------------------
       
+      %% check the input arguments
       % check the argument classes
       arguments
         yc {mustBeA(yc, ["numeric" "sym"])};
@@ -1504,7 +1464,7 @@ classdef beam
       if ~compatible_dims(Args{:})
         error('input arguments must have compatible dimensions');
       end
-      % compute the product of inertia
+      %% compute the product of inertia
       yn = beam.neutral_axis(yc, Ac, Icz);
       zn = beam.neutral_axis(zc, Ac, Icy);
       Inyz = Icyz+Ac.*(yc-yn).*(zc-zn);
@@ -1516,6 +1476,7 @@ classdef beam
       %   the neutral axis angle (alpha)
       % ----------------------------------------------------
       
+      %% check the input arguments
       % check the argument classes
       arguments
         My {mustBeA(My, ["numeric" "sym"])};
@@ -1531,7 +1492,7 @@ classdef beam
         error('input arguments must have compatible dimensions');
       end
       symbolics = cellfun(@issym, Args);
-      % compute the unsymmetric calculations
+      %% compute the unsymmetric calculations
       sigma = -Mz.*y./Iz+My.*z./Iy;
       alpha = atand(My.*Iz./(Mz.*Iy));
       if any(symbolics)
@@ -1547,6 +1508,7 @@ classdef beam
       %   for the Mohr's Circle
       % ------------------------
       
+      %% check the input arguments
       % check the argument classes
       arguments
         sigmax {mustBeA(sigmax, ["numeric" "sym"])};
@@ -1560,7 +1522,7 @@ classdef beam
         error('input arguments must have compatible dimensions');
       end
       symbolics = cellfun(@issym, Args);
-      % compute the Mohr's Circle equations
+      %% compute the Mohr's Circle equations
       sigmaavg = (sigmax+sigmay)/2;
       sigmadiff = (sigmax-sigmay)/2;
       if ~any(hasUnits(theta), 'all')
@@ -1585,6 +1547,7 @@ classdef beam
       %   from the Mohr's Circle equations
       % ----------------------------------
       
+      %% check the input arguments
       % check the argument classes
       arguments
         sigmax {mustBeA(sigmax, ["numeric" "sym"])};
@@ -1601,9 +1564,7 @@ classdef beam
       unknown = {'Unknown' 'false'};
       uniform = {'UniformOutput' false};
       IAC = {'IgnoreAnalyticConstraints' true};
-      % ----------------------------
-      % compute the principal angles
-      % ----------------------------
+      %% compute the principal angles
       % first solution
       sigmadiff = (sigmax-sigmay)/2;
       thetap = atand(tauxy./sigmadiff)/2;
@@ -1646,9 +1607,7 @@ classdef beam
           thetap = cellfun(func, thetap, uniform{:});
         end
       end
-      % ------------------------------
-      % compute the principal stresses
-      % ------------------------------
+      %% compute the principal stresses
       if ~iscell(thetap)
         Args = [Args {thetap}];
         [sigmaxp sigmayp tauxyp] = beam.mohr(Args{:});
@@ -1688,6 +1647,7 @@ classdef beam
       %   from the Mohr's Circle equations
       % -------------------------------------
       
+      %% check the input arguments
       % check the argument classes
       arguments
         sigmax {mustBeA(sigmax, ["numeric" "sym"])};
@@ -1704,9 +1664,7 @@ classdef beam
       unknown = {'Unknown' 'false'};
       uniform = {'UniformOutput' false};
       IAC = {'IgnoreAnalyticConstraints' true};
-      % --------------------------------
-      % compute the maximum shear angles
-      % --------------------------------
+      %% compute the maximum shear angles
       % first solution
       sigmadiff = (sigmax-sigmay)/2;
       thetas = atand(-sigmadiff./tauxy)/2;
@@ -1749,9 +1707,7 @@ classdef beam
           thetas = cellfun(func, thetas, uniform{:});
         end
       end
-      % ----------------------------------
-      % compute the maximum shear stresses
-      % ----------------------------------
+      %% compute the maximum shear stresses
       if ~iscell(thetas)
         Args = [Args {thetas}];
         [sigmaxs sigmays tauxys] = beam.mohr(Args{:});
@@ -1790,9 +1746,7 @@ classdef beam
       % - plots the Mohr's Circle
       % -------------------------
       
-      % -------------------------
-      % parse the input arguments
-      % -------------------------
+      %% parse the input arguments
       % compute sigmax, sigmay, and tauxy
       narginchk(3,inf);
       [sigmax sigmay tauxy] = deal(varargin{1:3});
@@ -1804,9 +1758,7 @@ classdef beam
         unit = [];
         options = varargin(4:end);
       end
-      % -------------------------
-      % check the input arguments
-      % -------------------------
+      %% check the input arguments
       % check sigmax, sigmay, and tauxy
       symnumsscalars = cellfun(@issymnumscalar, varargin(1:3));
       if ~all(symnumsscalars)
@@ -1820,7 +1772,7 @@ classdef beam
                     'a cell scalar of non-empty strings');
         error(str);
       end
-      % plot the Mohr's Circle
+      %% plot the Mohr's Circle
       figure;
       theta = sym('theta');
       [sigmaxm, ~, tauxym] = beam.mohr(sigmax, sigmay, tauxy, theta);
@@ -1844,9 +1796,7 @@ classdef beam
       %   and moment diagram
       % --------------------
       
-      % -------------------------
-      % parse the input arguments
-      % -------------------------
+      %% parse the input arguments
       % compute m and v
       narginchk(3,inf);
       [m v] = deal(varargin{1:2});
@@ -1876,9 +1826,7 @@ classdef beam
       else
         units = [];
       end
-      % -------------------------
-      % check the input arguments
-      % -------------------------
+      %% check the input arguments
       % check m and v
       if ~issymscalar(m) || ~issymscalar(v)
          error('''m'' and ''v'' must be symbolic scalars');
@@ -1904,9 +1852,7 @@ classdef beam
                     'containing non-empty strings');
         error(str);
       end
-      % ---------------------------------
-      % plot the shear and moment diagram
-      % ---------------------------------
+      %% plot the shear and moment diagram
       figure;
       func = {v m};
       titles = {'shear diagram' 'moment diagram'};
@@ -1932,6 +1878,7 @@ classdef beam
       %   the angle theta
       % ------------------------------------------
       
+      %% check the input arguments
       % check the argument classes
       arguments
         x {mustBeA(x, ["numeric" "sym"])};
@@ -1944,7 +1891,7 @@ classdef beam
         error('input arguments must have compatible dimensions');
       end
       symbolics = cellfun(@issym, Args);
-      % compute the rotated coordinates
+      %% compute the rotated coordinates
       if ~any(hasUnits(theta), 'all')
         xr = x.*cosd(theta)+y.*sind(theta);
         yr = y.*cosd(theta)-x.*sind(theta);
@@ -1965,6 +1912,7 @@ classdef beam
       %   rotated at an angle theta
       % ------------------------------------
       
+      %% check the input arguments
       % check the argument classes
       arguments
         Ix {mustBeA(Ix, ["numeric" "sym"])};
@@ -1978,7 +1926,7 @@ classdef beam
         error('input arguments must have compatible dimensions');
       end
       symbolics = cellfun(@issym, Args);
-      % compute the rotated moments and products of inertias
+      %% compute the rotated moments and products of inertias
       Iavg = (Ix+Iy)/2;
       Idiff = (Ix-Iy)/2;
       if ~any(hasUnits(theta), 'all')
@@ -2005,6 +1953,7 @@ classdef beam
       %   about the x and y axes
       % ---------------------------------
       
+      %% check the input arguments
       % check the argument classes
       arguments
         Ix {mustBeA(Ix, ["numeric" "sym"])};
@@ -2021,9 +1970,7 @@ classdef beam
       unknown = {'Unknown' 'false'};
       uniform = {'UniformOutput' false};
       IAC = {'IgnoreAnalyticConstraints' true};
-      % ----------------------------
-      % compute the principal angles
-      % ----------------------------
+      %% compute the principal angles
       % first solution
       Idiff = (Ix-Iy)/2;
       thetap = atand(-Ixy./Idiff)/2;
@@ -2066,9 +2013,7 @@ classdef beam
           thetap = cellfun(func, thetap, uniform{:});
         end
       end
-      % ------------------------------------------------------
-      % compute the principal moments and products of inertias
-      % ------------------------------------------------------
+      %% compute the principal moments and products of inertias
       if ~iscell(thetap)
         Args = [Args {thetap}];
         [Ixp Iyp Ixyp] = beam.Irot(Args{:});
@@ -2109,12 +2054,12 @@ classdef beam
       %   Solid Mechanics textbook
       % --------------------------
       
-      % check the input argument
+      %% check the input arguments
       arguments
         units ...
         {mustBeTextScalar, mustBeMemberi(units, ["fps" "si"])} = "fps";
       end      
-      % compute the Appendix B table
+      %% compute the Appendix B table
       persistent Struct;
       if isempty(Struct)
         % compute the table struct
@@ -2185,7 +2130,7 @@ classdef beam
           Struct.(field).Properties.CustomProperties.Weight = Weight;
         end
       end
-      % return the Appendix B table
+      %% return the Appendix B table
       if nargin == 0
         tbl = Struct;
       else
