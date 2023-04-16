@@ -1,9 +1,9 @@
 function str = fix_vars(str)
-  % ----------------------------------
+  % ------------------------------
   % - converts a string to a valid
   %   MuPAD syntax for the
   %   E, I, and Re variables
-  % ----------------------------------
+  % ------------------------------
   
   %% check the input argument
   % check the argument class
