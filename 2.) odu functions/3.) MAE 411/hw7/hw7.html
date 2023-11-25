@@ -1,0 +1,547 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>hw7</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-11-05"><meta name="DC.source" content="hw7.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Part 1</a></li><li><a href="#2">Part 2</a></li></ul></div><h2>Part 1<a name="1"></a></h2><pre class="codeinput"><span class="comment">% Given</span>
+[Ra Rg] = deal(0.287); <span class="comment">%kJ/kg/K</span>
+[ga gg] = deal(1.4, 1.3333);
+cpoa = ga*Ra/(ga-1); <span class="comment">%kJ/kg/K</span>
+cpog = gg*Rg/(gg-1); <span class="comment">%kJ/kg/K</span>
+
+[MC MH] = deal(14.4, 24.9); <span class="comment">%kmol</span>
+Ycc = MC+MH/4; <span class="comment">%kmol</span>
+Mfuel = 197.7; <span class="comment">%kg/kmol</span>
+Mair = 28.97; <span class="comment">%kg/kmol</span>
+Hrp = -8561991.6; <span class="comment">%kJ/kmol</span>
+
+[etaD etaC etaN] = deal(0.93, 0.87, 0.95);
+[etab etam etat] = deal(0.98, 0.99, 0.90);
+dpob = 0.04;
+PRC = 3;
+
+<span class="comment">% flight parameters</span>
+Ma = 0.84;
+pa = 54.05; <span class="comment">%kPa</span>
+ta = 255.7; <span class="comment">%K</span>
+
+tint = 1200; <span class="comment">%K</span>
+tAB = (1200:100:2000)'; <span class="comment">%K</span>
+nAB = length(tAB);
+
+<span class="comment">% Subsonic Diffuser (Inlet)</span>
+Va = Ma*sqrt(ga*Ra*10^3*ta);
+po1 = pa*(1+etaD*(ga-1)/2*Ma^2)^(ga/(ga-1));
+to1 = ta*(1+(ga-1)/2*Ma^2);
+
+<span class="comment">% Low Pressure Compressor</span>
+po2 = po1*PRC;
+to2 = to1*(1+(PRC^((ga-1)/ga)-1)/etaC);
+wLPC = cpoa*(to1-to2);
+
+<span class="comment">% High Pressure Compressor</span>
+po3 = po2*PRC;
+to3 = to2*(1+(PRC^((ga-1)/ga)-1)/etaC);
+wHPC = cpoa*(to2-to3);
+
+<span class="comment">% Combustion Chamber</span>
+po4 = (1-dpob)*po3;
+to4 = tint;
+dh = @(i) h(i,to4)-h(i,to3);
+X = (dh(4)+3.76*dh(5))./<span class="keyword">...</span>
+    (-Hrp-MC*dh(2)-MH/2*dh(3)+Ycc*dh(4));
+fcc = X*Mfuel/(4.76*Mair*etab);
+
+<span class="comment">% High Pressure Turbine</span>
+to5 = to4+wHPC/(etam*(1+fcc)*cpog);
+po5 = po4*(1-(1-to5/to4)/etat)^(gg/(gg-1));
+
+<span class="comment">% Low Pressure Turbine</span>
+to6 = to5+wLPC/(etam*(1+fcc)*cpog);
+po6 = po5*(1-(1-to6/to5)/etat)^(gg/(gg-1));
+
+<span class="comment">% Converging Nozzle (No After Burner)</span>
+pspo6 = (1-1/etaN*(1-2/(gg+1)))^(gg/(gg-1));
+<span class="keyword">if</span> pa/po6 &lt;= pspo6
+  Me_noAB = 1;
+  pe_noAB = po6*pspo6;
+  te_noAB = to6*2/(gg+1);
+  re_noAB = pe_noAB/(Rg*te_noAB);
+<span class="keyword">else</span>
+  pe_noAB = pa;
+  te_noAB = to6*(1-etaN*(1-(pe_noAB/po6)^((gg-1)/gg)));
+  re_noAB = pe_noAB/(Rg*te_noAB);
+  Me_noAB = sqrt((to6/te_noAB-1)*2/(gg-1));
+<span class="keyword">end</span>
+Ve_noAB = Me_noAB*sqrt(gg*Rg*10^3*te_noAB);
+
+<span class="comment">% After Burner</span>
+po7 = (1-dpob)*po6;
+[to7 Z] = deal(tAB);
+<span class="keyword">for</span> k = 1:nAB
+  dh = @(i) h(i,to7(k))-h(i,to6);
+  Z(k) = (3.76*dh(5)+dh(4)+X*(MC*dh(2)+MH/2*dh(3)-Ycc*dh(4)))./<span class="keyword">...</span>
+         (-Hrp-MC*dh(2)-MH/2*dh(3)+Ycc*dh(4));
+<span class="keyword">end</span>
+fAB = Z*Mfuel/(4.76*Mair*etab);
+fo = fcc+fAB;
+
+<span class="comment">% Converging Nozzle (After Burner)</span>
+pspo7 = pspo6;
+[Me_AB pe_AB te_AB re_AB] = deal(tAB);
+<span class="keyword">for</span> k = 1:nAB
+  <span class="keyword">if</span> pa/po7 &lt;= pspo7
+    Me_AB(k) = 1;
+    pe_AB(k) = po7*pspo7;
+    te_AB(k) = to7(k)*2/(gg+1);
+    re_AB(k) = pe_AB(k)/(Rg*te_AB(k));
+  <span class="keyword">else</span>
+    pe_AB(k) = pa;
+    te_AB(k) = to7(k)*(1-etaN*(1-(pe_AB(k)/po7)^((gg-1)/gg)));
+    re_AB(k) = pe_AB(k)/(Rg*te_AB(k));
+    Me_AB(k) = sqrt((to7(k)/te_AB(k)-1)*2/(gg-1));
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+Ve_AB = Me_AB.*sqrt(gg*Rg*10^3*te_AB);
+
+<span class="comment">% Performance Chart</span>
+Fs_noAB = (1+fcc)*Ve_noAB-Va+<span class="keyword">...</span>
+          (pe_noAB-pa)*10^3*(1+fcc)/(re_noAB*Ve_noAB);
+tsfc_noAB = fcc./Fs_noAB*3600;
+
+Fs_AB = (1+fo).*Ve_AB-Va+<span class="keyword">...</span>
+        (pe_AB-pa)*10^3.*(1+fo)./(re_AB.*Ve_AB);
+tsfc_AB = fo./Fs_AB*3600;
+
+filename = [pwd <span class="string">'6.) MATLAB\1.) odu classes\3.) MAE 411\hw7\hw7.xlsx'</span>];
+data = [tAB Fs_AB Fs_AB/Fs_noAB tsfc_AB tsfc_AB/tsfc_noAB];
+xlswrite(filename, data, <span class="string">'part 1'</span>, <span class="string">'A2'</span>);
+data = [Fs_noAB; tsfc_noAB];
+xlswrite(filename, data, <span class="string">'part 1'</span>, <span class="string">'B12'</span>);
+</pre><h2>Part 2<a name="2"></a></h2><pre class="codeinput"><span class="comment">% Given</span>
+[Ra Rg] = deal(0.287); <span class="comment">%kJ/kg/K</span>
+[ga gg] = deal(1.4, 1.3333);
+cpoa = ga*Ra/(ga-1); <span class="comment">%kJ/kg/K</span>
+cpog = gg*Rg/(gg-1); <span class="comment">%kJ/kg/K</span>
+
+[MC MH] = deal(14.4, 24.9); <span class="comment">%kmol</span>
+Ycc = MC+MH/4; <span class="comment">%kmol</span>
+Mfuel = 197.7; <span class="comment">%kg/kmol</span>
+Mair = 28.97; <span class="comment">%kg/kmol</span>
+Hrp = -8561991.6; <span class="comment">%kJ/kmol</span>
+
+[etaD etaC etaN] = deal(0.93, 0.87, 0.95);
+[etab etam etat] = deal(0.98, 0.99, 0.90);
+dpob = 0.04;
+PRC = 3;
+
+<span class="comment">% Flight Parameters</span>
+Va = (0:50:300)'; <span class="comment">%m/sec</span>
+pa = 101.3; <span class="comment">%kPa</span>
+ta = 288.2; <span class="comment">%K</span>
+
+tint = 1200; <span class="comment">%K</span>
+tAB = 2000; <span class="comment">%K</span>
+nVa = length(Va);
+
+<span class="comment">% Subsonic Diffuser (Inlet)</span>
+Ma = Va/sqrt(ga*Ra*10^3*ta);
+po1 = pa*(1+etaD*(ga-1)/2*Ma.^2).^(ga/(ga-1));
+to1 = ta*(1+(ga-1)/2*Ma.^2);
+
+<span class="comment">% Low Pressure Compressor</span>
+po2 = po1*PRC;
+to2 = to1*(1+(PRC^((ga-1)/ga)-1)/etaC);
+wLPC = cpoa*(to1-to2);
+
+<span class="comment">% High Pressure Compressor</span>
+po3 = po2*PRC;
+to3 = to2*(1+(PRC^((ga-1)/ga)-1)/etaC);
+wHPC = cpoa*(to2-to3);
+
+<span class="comment">% Combustion Chamber</span>
+po4 = (1-dpob)*po3;
+to4 = tint;
+X = Va;
+<span class="keyword">for</span> k = 1:nVa
+  dh = @(i) h(i,to4)-h(i,to3(k));
+  X(k) = (dh(4)+3.76*dh(5))/<span class="keyword">...</span>
+         (-Hrp-MC*dh(2)-MH/2*dh(3)+Ycc*dh(4));
+<span class="keyword">end</span>
+fcc = X*Mfuel/(4.76*Mair*etab);
+
+<span class="comment">% High Pressure Turbine</span>
+to5 = to4+wHPC./(etam*(1+fcc)*cpog);
+po5 = po4.*(1-(1-to5/to4)/etat).^(gg/(gg-1));
+
+<span class="comment">% Low Pressure Turbine</span>
+to6 = to5+wLPC./(etam*(1+fcc)*cpog);
+po6 = po5.*(1-(1-to6./to5)/etat).^(gg/(gg-1));
+
+<span class="comment">% Converging Nozzle (No After Burner)</span>
+pspo6 = (1-1/etaN*(1-2/(gg+1)))^(gg/(gg-1));
+[Me_noAB pe_noAB te_noAB re_noAB] = deal(Va);
+<span class="keyword">for</span> k = 1:nVa
+  <span class="keyword">if</span> pa/po6(k) &lt;= pspo6
+    Me_noAB(k) = 1;
+    pe_noAB(k) = po6(k)*pspo6;
+    te_noAB(k) = to6(k)*2/(gg+1);
+    re_noAB(k) = pe_noAB(k)/(Rg*te_noAB(k));
+  <span class="keyword">else</span>
+    pe_noAB(k) = pa;
+    te_noAB(k) = to6(k)*(1-etaN*(1-(pe_noAB(k)/po6)^((gg-1)/gg)));
+    re_noAB(k) = pe_noAB(k)/(Rg*te_noAB(k));
+    Me_noAB(k) = sqrt((to6(k)/te_noAB(k)-1)*2/(gg-1));
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+Ve_noAB = Me_noAB.*sqrt(gg*Rg*10^3*te_noAB);
+
+<span class="comment">% After Burner</span>
+po7 = (1-dpob)*po6;
+to7 = tAB;
+Z = Va;
+<span class="keyword">for</span> k = 1:nVa
+  dh = @(i) h(i,to7)-h(i,to6(k));
+  Z(k) = (3.76*dh(5)+dh(4)+X(k)*(MC*dh(2)+MH/2*dh(3)-Ycc*dh(4)))/<span class="keyword">...</span>
+         (-Hrp-MC*dh(2)-MH/2*dh(3)+Ycc*dh(4));
+<span class="keyword">end</span>
+fAB = Z*Mfuel/(4.76*Mair*etab);
+fo = fcc+fAB;
+
+<span class="comment">% Converging Nozzle (After Burner)</span>
+pspo7 = pspo6;
+[Me_AB pe_AB te_AB re_AB] = deal(Va);
+<span class="keyword">for</span> k = 1:length(po7)
+  <span class="keyword">if</span> pa/po7(k) &lt;= pspo7
+    Me_AB(k) = 1;
+    pe_AB(k) = po7(k)*pspo7;
+    te_AB(k) = to7*2/(gg+1);
+    re_AB(k) = pe_AB(k)/(Rg*te_AB(k));
+  <span class="keyword">else</span>
+    pe_AB(k) = pa;
+    te_AB(k) = to7*(1-etaN*(1-(pe_AB(k)/po7)^((gg-1)/gg)));
+    re_AB(k) = pe_AB(k)/(Rg*te_AB(k));
+    Me_AB(k) = sqrt((to7/te_AB(k)-1)*2/(gg-1));
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+Ve_AB = Me_AB.*sqrt(gg*Rg*10^3*te_AB);
+
+<span class="comment">% Performance Chart</span>
+Fs_noAB = (1+fcc).*Ve_noAB-Va+<span class="keyword">...</span>
+          (pe_noAB-pa)*10^3.*(1+fcc)./(re_noAB.*Ve_noAB);
+tsfc_noAB = fcc./Fs_noAB*3600;
+
+Fs_AB = (1+fo).*Ve_AB-Va+<span class="keyword">...</span>
+        (pe_AB-pa)*10^3.*(1+fo)./(re_AB.*Ve_AB);
+tsfc_AB = fo./Fs_AB*3600;
+
+filename = [pwd <span class="string">'6.) MATLAB\1.) odu classes\3.) MAE 411\hw7\hw7.xlsx'</span>];
+data = [Va Fs_AB Fs_noAB tsfc_AB tsfc_noAB];
+xlswrite(filename, data, <span class="string">'part 2'</span>, <span class="string">'A2'</span>);
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Part 1
+
+% Given
+[Ra Rg] = deal(0.287); %kJ/kg/K
+[ga gg] = deal(1.4, 1.3333);
+cpoa = ga*Ra/(ga-1); %kJ/kg/K
+cpog = gg*Rg/(gg-1); %kJ/kg/K
+
+[MC MH] = deal(14.4, 24.9); %kmol
+Ycc = MC+MH/4; %kmol
+Mfuel = 197.7; %kg/kmol
+Mair = 28.97; %kg/kmol
+Hrp = -8561991.6; %kJ/kmol
+
+[etaD etaC etaN] = deal(0.93, 0.87, 0.95);
+[etab etam etat] = deal(0.98, 0.99, 0.90);
+dpob = 0.04;
+PRC = 3;
+
+% flight parameters
+Ma = 0.84;
+pa = 54.05; %kPa
+ta = 255.7; %K
+
+tint = 1200; %K
+tAB = (1200:100:2000)'; %K
+nAB = length(tAB);
+
+% Subsonic Diffuser (Inlet)
+Va = Ma*sqrt(ga*Ra*10^3*ta);
+po1 = pa*(1+etaD*(ga-1)/2*Ma^2)^(ga/(ga-1));
+to1 = ta*(1+(ga-1)/2*Ma^2);
+
+% Low Pressure Compressor
+po2 = po1*PRC;
+to2 = to1*(1+(PRC^((ga-1)/ga)-1)/etaC);
+wLPC = cpoa*(to1-to2);
+
+% High Pressure Compressor
+po3 = po2*PRC;
+to3 = to2*(1+(PRC^((ga-1)/ga)-1)/etaC);
+wHPC = cpoa*(to2-to3);
+
+% Combustion Chamber
+po4 = (1-dpob)*po3;
+to4 = tint;
+dh = @(i) h(i,to4)-h(i,to3);
+X = (dh(4)+3.76*dh(5))./...
+    (-Hrp-MC*dh(2)-MH/2*dh(3)+Ycc*dh(4));
+fcc = X*Mfuel/(4.76*Mair*etab);
+
+% High Pressure Turbine
+to5 = to4+wHPC/(etam*(1+fcc)*cpog);
+po5 = po4*(1-(1-to5/to4)/etat)^(gg/(gg-1));
+
+% Low Pressure Turbine
+to6 = to5+wLPC/(etam*(1+fcc)*cpog);
+po6 = po5*(1-(1-to6/to5)/etat)^(gg/(gg-1));
+
+% Converging Nozzle (No After Burner)
+pspo6 = (1-1/etaN*(1-2/(gg+1)))^(gg/(gg-1));
+if pa/po6 <= pspo6
+  Me_noAB = 1;
+  pe_noAB = po6*pspo6;
+  te_noAB = to6*2/(gg+1);
+  re_noAB = pe_noAB/(Rg*te_noAB);
+else
+  pe_noAB = pa;
+  te_noAB = to6*(1-etaN*(1-(pe_noAB/po6)^((gg-1)/gg)));
+  re_noAB = pe_noAB/(Rg*te_noAB);
+  Me_noAB = sqrt((to6/te_noAB-1)*2/(gg-1));
+end
+Ve_noAB = Me_noAB*sqrt(gg*Rg*10^3*te_noAB);
+
+% After Burner
+po7 = (1-dpob)*po6; 
+[to7 Z] = deal(tAB);
+for k = 1:nAB
+  dh = @(i) h(i,to7(k))-h(i,to6);
+  Z(k) = (3.76*dh(5)+dh(4)+X*(MC*dh(2)+MH/2*dh(3)-Ycc*dh(4)))./...
+         (-Hrp-MC*dh(2)-MH/2*dh(3)+Ycc*dh(4));
+end
+fAB = Z*Mfuel/(4.76*Mair*etab);
+fo = fcc+fAB;
+
+% Converging Nozzle (After Burner)
+pspo7 = pspo6;
+[Me_AB pe_AB te_AB re_AB] = deal(tAB);
+for k = 1:nAB
+  if pa/po7 <= pspo7
+    Me_AB(k) = 1;
+    pe_AB(k) = po7*pspo7;
+    te_AB(k) = to7(k)*2/(gg+1);
+    re_AB(k) = pe_AB(k)/(Rg*te_AB(k));
+  else
+    pe_AB(k) = pa;
+    te_AB(k) = to7(k)*(1-etaN*(1-(pe_AB(k)/po7)^((gg-1)/gg)));
+    re_AB(k) = pe_AB(k)/(Rg*te_AB(k));
+    Me_AB(k) = sqrt((to7(k)/te_AB(k)-1)*2/(gg-1));
+  end  
+end
+Ve_AB = Me_AB.*sqrt(gg*Rg*10^3*te_AB);
+
+% Performance Chart
+Fs_noAB = (1+fcc)*Ve_noAB-Va+...
+          (pe_noAB-pa)*10^3*(1+fcc)/(re_noAB*Ve_noAB);
+tsfc_noAB = fcc./Fs_noAB*3600;
+
+Fs_AB = (1+fo).*Ve_AB-Va+...
+        (pe_AB-pa)*10^3.*(1+fo)./(re_AB.*Ve_AB);
+tsfc_AB = fo./Fs_AB*3600;
+
+filename = [pwd '6.) MATLAB\1.) odu classes\3.) MAE 411\hw7\hw7.xlsx'];
+data = [tAB Fs_AB Fs_AB/Fs_noAB tsfc_AB tsfc_AB/tsfc_noAB];
+xlswrite(filename, data, 'part 1', 'A2');
+data = [Fs_noAB; tsfc_noAB];
+xlswrite(filename, data, 'part 1', 'B12');
+
+%% Part 2
+
+% Given
+[Ra Rg] = deal(0.287); %kJ/kg/K
+[ga gg] = deal(1.4, 1.3333);
+cpoa = ga*Ra/(ga-1); %kJ/kg/K
+cpog = gg*Rg/(gg-1); %kJ/kg/K
+
+[MC MH] = deal(14.4, 24.9); %kmol
+Ycc = MC+MH/4; %kmol
+Mfuel = 197.7; %kg/kmol
+Mair = 28.97; %kg/kmol
+Hrp = -8561991.6; %kJ/kmol
+
+[etaD etaC etaN] = deal(0.93, 0.87, 0.95);
+[etab etam etat] = deal(0.98, 0.99, 0.90);
+dpob = 0.04;
+PRC = 3;
+
+% Flight Parameters
+Va = (0:50:300)'; %m/sec
+pa = 101.3; %kPa
+ta = 288.2; %K
+
+tint = 1200; %K
+tAB = 2000; %K
+nVa = length(Va);
+
+% Subsonic Diffuser (Inlet)
+Ma = Va/sqrt(ga*Ra*10^3*ta);
+po1 = pa*(1+etaD*(ga-1)/2*Ma.^2).^(ga/(ga-1));
+to1 = ta*(1+(ga-1)/2*Ma.^2);
+
+% Low Pressure Compressor
+po2 = po1*PRC;
+to2 = to1*(1+(PRC^((ga-1)/ga)-1)/etaC);
+wLPC = cpoa*(to1-to2);
+
+% High Pressure Compressor
+po3 = po2*PRC;
+to3 = to2*(1+(PRC^((ga-1)/ga)-1)/etaC);
+wHPC = cpoa*(to2-to3);
+
+% Combustion Chamber
+po4 = (1-dpob)*po3;
+to4 = tint;
+X = Va;
+for k = 1:nVa
+  dh = @(i) h(i,to4)-h(i,to3(k));
+  X(k) = (dh(4)+3.76*dh(5))/...
+         (-Hrp-MC*dh(2)-MH/2*dh(3)+Ycc*dh(4));  
+end
+fcc = X*Mfuel/(4.76*Mair*etab);
+
+% High Pressure Turbine
+to5 = to4+wHPC./(etam*(1+fcc)*cpog);
+po5 = po4.*(1-(1-to5/to4)/etat).^(gg/(gg-1));
+
+% Low Pressure Turbine
+to6 = to5+wLPC./(etam*(1+fcc)*cpog);
+po6 = po5.*(1-(1-to6./to5)/etat).^(gg/(gg-1));
+
+% Converging Nozzle (No After Burner)
+pspo6 = (1-1/etaN*(1-2/(gg+1)))^(gg/(gg-1));
+[Me_noAB pe_noAB te_noAB re_noAB] = deal(Va);
+for k = 1:nVa
+  if pa/po6(k) <= pspo6
+    Me_noAB(k) = 1;
+    pe_noAB(k) = po6(k)*pspo6;
+    te_noAB(k) = to6(k)*2/(gg+1);
+    re_noAB(k) = pe_noAB(k)/(Rg*te_noAB(k));
+  else
+    pe_noAB(k) = pa;
+    te_noAB(k) = to6(k)*(1-etaN*(1-(pe_noAB(k)/po6)^((gg-1)/gg)));
+    re_noAB(k) = pe_noAB(k)/(Rg*te_noAB(k));
+    Me_noAB(k) = sqrt((to6(k)/te_noAB(k)-1)*2/(gg-1));
+  end
+end
+Ve_noAB = Me_noAB.*sqrt(gg*Rg*10^3*te_noAB);
+
+% After Burner
+po7 = (1-dpob)*po6; 
+to7 = tAB;
+Z = Va;
+for k = 1:nVa
+  dh = @(i) h(i,to7)-h(i,to6(k));
+  Z(k) = (3.76*dh(5)+dh(4)+X(k)*(MC*dh(2)+MH/2*dh(3)-Ycc*dh(4)))/...
+         (-Hrp-MC*dh(2)-MH/2*dh(3)+Ycc*dh(4));
+end
+fAB = Z*Mfuel/(4.76*Mair*etab);
+fo = fcc+fAB;
+
+% Converging Nozzle (After Burner)
+pspo7 = pspo6;
+[Me_AB pe_AB te_AB re_AB] = deal(Va);
+for k = 1:length(po7)
+  if pa/po7(k) <= pspo7
+    Me_AB(k) = 1;
+    pe_AB(k) = po7(k)*pspo7;
+    te_AB(k) = to7*2/(gg+1);
+    re_AB(k) = pe_AB(k)/(Rg*te_AB(k));
+  else
+    pe_AB(k) = pa;
+    te_AB(k) = to7*(1-etaN*(1-(pe_AB(k)/po7)^((gg-1)/gg)));
+    re_AB(k) = pe_AB(k)/(Rg*te_AB(k));
+    Me_AB(k) = sqrt((to7/te_AB(k)-1)*2/(gg-1));
+  end  
+end
+Ve_AB = Me_AB.*sqrt(gg*Rg*10^3*te_AB);
+
+% Performance Chart
+Fs_noAB = (1+fcc).*Ve_noAB-Va+...
+          (pe_noAB-pa)*10^3.*(1+fcc)./(re_noAB.*Ve_noAB);
+tsfc_noAB = fcc./Fs_noAB*3600;
+
+Fs_AB = (1+fo).*Ve_AB-Va+...
+        (pe_AB-pa)*10^3.*(1+fo)./(re_AB.*Ve_AB);
+tsfc_AB = fo./Fs_AB*3600;
+
+filename = [pwd '6.) MATLAB\1.) odu classes\3.) MAE 411\hw7\hw7.xlsx'];
+data = [Va Fs_AB Fs_noAB tsfc_AB tsfc_noAB];
+xlswrite(filename, data, 'part 2', 'A2');
+##### SOURCE END #####
+--></body></html>

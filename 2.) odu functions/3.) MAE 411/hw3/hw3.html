@@ -1,0 +1,195 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>hw3</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-09-29"><meta name="DC.source" content="hw3.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">part 1</a></li><li><a href="#2">part 2</a></li></ul></div><h2>part 1<a name="1"></a></h2><pre class="codeinput"><span class="comment">% given</span>
+MC = 10; <span class="comment">%kmol</span>
+MH = 22; <span class="comment">%kmol</span>
+Tr = 500; <span class="comment">%K</span>
+Tp = (600:100:2200)'; <span class="comment">%K</span>
+Hrp = -6312300; <span class="comment">%kJ/kmol</span>
+Mfuel = 142; <span class="comment">%kg/kmol</span>
+Mair = 28.97; <span class="comment">%kg/kmol</span>
+
+<span class="comment">% calculations</span>
+Ycc = MC+MH/4;
+dh = @(i,Tp) h(i,Tp)-h(i,Tr);
+[num den] = deal(Tp);
+
+<span class="keyword">for</span> k = 1:length(Tp)
+  num(k) = -Hrp-MC*dh(2,Tp(k))-MH/2*dh(3,Tp(k))+Ycc*dh(4,Tp(k));
+  den(k) = dh(4,Tp(k))+3.76*dh(5,Tp(k));
+<span class="keyword">end</span>
+Y = num./den;
+f = Mfuel./(4.76*Y*Mair);
+
+<span class="comment">% data</span>
+tbl = table(Tp, f);
+writetable(tbl, <span class="string">'hw3 (part 1).csv'</span>);
+</pre><h2>part 2<a name="2"></a></h2><pre class="codeinput"><span class="comment">% given</span>
+MC = 8; <span class="comment">%kmol</span>
+MH = 18; <span class="comment">%kmol</span>
+Tr = 650; <span class="comment">%K</span>
+Hrp_fuel = -5089100; <span class="comment">%kJ/kmol</span>
+Hrp_co = 282800; <span class="comment">%kJ/kmol</span>
+
+<span class="comment">% calculations</span>
+Ycc = MC+MH/4;
+Ymin = Ycc-MC/2;
+Y_Ycc = [Ymin/Ycc 0.8:0.1:2.0]';
+Y = Ycc*Y_Ycc;
+dh = @(i,Tp) h(i,Tp)-h(i,Tr);
+
+n = length(Y);
+N = zeros(n,5);
+[N(Y&lt;Ycc,1) N(Y&gt;=Ycc,1)] = deal(2*(Ycc-Y(Y&lt;Ycc)), 0);
+[N(Y&lt;Ycc,2) N(Y&gt;=Ycc,2)] = deal(2*(Y(Y&lt;Ycc)-Ymin), MC);
+N(:,3) = MH/2;
+[N(Y&lt;Ycc,4) N(Y&gt;=Ycc,4)] = deal(0, Y(Y&gt;=Ycc)-Ycc);
+N(:,5) = 3.76*Y;
+
+Tp = zeros(n,1);
+F = @(k,Tp) Hrp_fuel+N(k,1)*(Hrp_co+dh(1,Tp))+<span class="keyword">...</span>
+                     N(k,2)*dh(2,Tp)+<span class="keyword">...</span>
+                     N(k,3)*dh(3,Tp)+<span class="keyword">...</span>
+                     N(k,4)*dh(4,Tp)+<span class="keyword">...</span>
+                     N(k,5)*dh(5,Tp);
+<span class="keyword">for</span> k = 1:n
+  Tp(k) = fzero(@(Tp)F(k,Tp), 2000);
+<span class="keyword">end</span>
+
+<span class="comment">% data</span>
+tbl = table(Y_Ycc, Tp);
+writetable(tbl, <span class="string">'hw3 (part 2).csv'</span>);
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% part 1
+
+% given
+MC = 10; %kmol
+MH = 22; %kmol
+Tr = 500; %K
+Tp = (600:100:2200)'; %K
+Hrp = -6312300; %kJ/kmol
+Mfuel = 142; %kg/kmol
+Mair = 28.97; %kg/kmol
+
+% calculations
+Ycc = MC+MH/4;
+dh = @(i,Tp) h(i,Tp)-h(i,Tr);
+[num den] = deal(Tp);
+
+for k = 1:length(Tp)
+  num(k) = -Hrp-MC*dh(2,Tp(k))-MH/2*dh(3,Tp(k))+Ycc*dh(4,Tp(k));
+  den(k) = dh(4,Tp(k))+3.76*dh(5,Tp(k));
+end
+Y = num./den;
+f = Mfuel./(4.76*Y*Mair);
+
+% data
+tbl = table(Tp, f);
+writetable(tbl, 'hw3 (part 1).csv');
+
+%% part 2
+
+% given
+MC = 8; %kmol
+MH = 18; %kmol
+Tr = 650; %K
+Hrp_fuel = -5089100; %kJ/kmol
+Hrp_co = 282800; %kJ/kmol
+
+% calculations
+Ycc = MC+MH/4;
+Ymin = Ycc-MC/2;
+Y_Ycc = [Ymin/Ycc 0.8:0.1:2.0]';
+Y = Ycc*Y_Ycc;
+dh = @(i,Tp) h(i,Tp)-h(i,Tr);
+
+n = length(Y);
+N = zeros(n,5);
+[N(Y<Ycc,1) N(Y>=Ycc,1)] = deal(2*(Ycc-Y(Y<Ycc)), 0); 
+[N(Y<Ycc,2) N(Y>=Ycc,2)] = deal(2*(Y(Y<Ycc)-Ymin), MC);
+N(:,3) = MH/2;
+[N(Y<Ycc,4) N(Y>=Ycc,4)] = deal(0, Y(Y>=Ycc)-Ycc);
+N(:,5) = 3.76*Y;
+
+Tp = zeros(n,1);
+F = @(k,Tp) Hrp_fuel+N(k,1)*(Hrp_co+dh(1,Tp))+...
+                     N(k,2)*dh(2,Tp)+...
+                     N(k,3)*dh(3,Tp)+...
+                     N(k,4)*dh(4,Tp)+...
+                     N(k,5)*dh(5,Tp);
+for k = 1:n
+  Tp(k) = fzero(@(Tp)F(k,Tp), 2000);
+end
+
+% data
+tbl = table(Y_Ycc, Tp);
+writetable(tbl, 'hw3 (part 2).csv');
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,527 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>final</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2015-12-01"><meta name="DC.source" content="final.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Part 1</a></li><li><a href="#2">Part 2</a></li></ul></div><h2>Part 1<a name="1"></a></h2><pre class="codeinput"><span class="comment">% Given</span>
+R = 8.31451; <span class="comment">%kJ/kmol/K</span>
+V1 = 0.0005; <span class="comment">%m^3</span>
+p1 = 100; <span class="comment">%kPa</span>
+t1 = 300; <span class="comment">%K</span>
+rv = 9;
+
+M_fuel = 114; <span class="comment">%kg/kmol</span>
+MC = 8; <span class="comment">%kmol</span>
+MH = 18; <span class="comment">%kmol</span>
+
+Ycc = MC+MH/4;
+Ymin = Ycc-MC/2;
+Y = (0.7:0.1:1.4)'*Ycc;
+nY = length(Y);
+filename = [pwd <span class="string">'6.) MATLAB\1.) odu classes\3.) MAE 411\final\final.xlsx'</span>];
+
+<span class="comment">% Process 1-2</span>
+y_fuel = 1./(1+4.76*Y);
+y_air = 4.76*Y./(1+4.76*Y);
+
+n_tot = p1*V1/(R*t1);
+n_fuel = y_fuel*n_tot;
+n_air = y_air*n_tot;
+m_fuel = n_fuel*M_fuel;
+
+[a_air b_air] = deal(27.5, 0.0057);
+[a_fuel b_fuel] = deal(38.4, 0.429);
+phi = @(a,b,t1,t2) (a-R)*log(t2/t1)+b*(t2-t1);
+
+t2 = Y;
+<span class="keyword">for</span> k = 1:nY
+  F = @(t2) y_air(k)*phi(a_air,b_air,t1,t2)+<span class="keyword">...</span>
+            y_fuel(k)*phi(a_fuel,b_fuel,t1,t2)+<span class="keyword">...</span>
+            R*log(1/rv);
+  t2(k) = fzero(F, 900);
+<span class="keyword">end</span>
+w12 = -n_fuel.*((a_fuel-R)*(t2-t1)+b_fuel*(t2.^2-t1^2)/2)<span class="keyword">...</span>
+      -n_air.*((a_air-R)*(t2-t1)+b_air*(t2.^2-t1^2)/2);
+
+<span class="comment">% Process 2-3</span>
+Urp_fuel = -5097780; <span class="comment">%kJ/kmol</span>
+Urp_CO_CO2 = 281400; <span class="comment">%kJ/kmol</span>
+
+[N_CO N_CO2 N_H2O N_O2 N_N2] = deal(Y);
+N_CO(Y &lt; Ycc) = 2*(Ycc-Y(Y &lt; Ycc));
+N_CO2(Y &lt; Ycc) = 2*(Y(Y &lt; Ycc)-Ymin);
+N_H2O(Y &lt; Ycc) = MH/2;
+N_O2(Y &lt; Ycc) = 0;
+N_N2(Y &lt; Ycc) = 3.76*Y(Y &lt; Ycc);
+
+N_CO(Y == Ycc) = 0;
+N_CO2(Y == Ycc) = MC;
+N_H2O(Y == Ycc) = MH/2;
+N_O2(Y == Ycc) = 0;
+N_N2(Y == Ycc) = 3.76*Ycc;
+
+N_CO(Y &gt; Ycc) = 0;
+N_CO2(Y &gt; Ycc) = MC;
+N_H2O(Y &gt; Ycc) = MH/2;
+N_O2(Y &gt; Ycc) = Y(Y &gt; Ycc)-Ycc;
+N_N2(Y &gt; Ycc) = 3.76*Y(Y &gt; Ycc);
+sumN = N_CO+N_CO2+N_H2O+N_O2+N_N2;
+
+t3 = Y;
+<span class="keyword">for</span> k = 1:nY
+  du = @(i,t3) h(i,t3)-h(i,t2(k))-R*(t3-t2(k));
+  F = @(t3) Urp_fuel+N_CO(k)*(Urp_CO_CO2+du(1,t3))<span class="keyword">...</span>
+                    +N_CO2(k)*du(2,t3)<span class="keyword">...</span>
+                    +N_H2O(k)*du(3,t3)<span class="keyword">...</span>
+                    +N_O2(k)*du(4,t3)<span class="keyword">...</span>
+                    +N_N2(k)*du(5,t3);
+  t3(k) = fzero(F, 3000);
+<span class="keyword">end</span>
+n3n2 = sumN./(1+4.76*Y);
+
+<span class="comment">% Process 3-4</span>
+n2 = n_tot;
+n3 = n2*n3n2;
+
+y_CO = N_CO./sumN;
+y_CO2 = N_CO2./sumN;
+y_H2O = N_H2O./sumN;
+y_O2 = N_O2./sumN;
+y_N2 = N_N2./sumN;
+
+n_CO = y_CO.*n3;
+n_CO2 = y_CO2.*n3;
+n_H2O = y_H2O.*n3;
+n_O2 = y_O2.*n3;
+n_N2 = y_N2.*n3;
+
+[t4 w34] = deal(Y);
+<span class="keyword">for</span> k = 1:nY
+  dPhi = @(i,t4) Phi(i,t4)-Phi(i,t3(k));
+  dh = @(i,t4) h(i,t4)-h(i,t3(k))-R*(t4-t3(k));
+  F = @(t4) R*log(rv*t3(k)/t4)+y_CO(k)*dPhi(1,t4)<span class="keyword">...</span>
+                              +y_CO2(k)*dPhi(2,t4)<span class="keyword">...</span>
+                              +y_H2O(k)*dPhi(3,t4)<span class="keyword">...</span>
+                              +y_O2(k)*dPhi(4,t4)<span class="keyword">...</span>
+                              +y_N2(k)*dPhi(5,t4);
+  t4(k) = fzero(F, 1500);
+  w34(k) = -n_CO(k)*dh(1,t4(k))<span class="keyword">...</span>
+           -n_CO2(k)*dh(2,t4(k))<span class="keyword">...</span>
+           -n_H2O(k)*dh(3,t4(k))<span class="keyword">...</span>
+           -n_O2(k)*dh(4,t4(k))<span class="keyword">...</span>
+           -n_N2(k)*dh(5,t4(k));
+<span class="keyword">end</span>
+
+<span class="comment">% Results</span>
+HV = 5097780; <span class="comment">%kJ/kmol fuel</span>
+pps = 25; <span class="comment">%power strokes/sec</span>
+
+wnet = (w12+w34)*pps;
+etath = wnet./(n_fuel*HV*pps);
+sfc = m_fuel*pps./wnet;
+
+data = [Y/Ycc wnet etath sfc];
+xlswrite(filename, data, <span class="string">'part 1'</span>, <span class="string">'A2'</span>);
+</pre><h2>Part 2<a name="2"></a></h2><pre class="codeinput"><span class="comment">% Given</span>
+R = 8.31451; <span class="comment">%kJ/kmol/K</span>
+V1 = 0.0005; <span class="comment">%m^3</span>
+p1 = 100; <span class="comment">%kPa</span>
+t1 = 300; <span class="comment">%K</span>
+
+rv = (6.0:0.5:12.0)';
+nrv = length(rv);
+
+M_fuel = 114; <span class="comment">%kg/kmol</span>
+MC = 8; <span class="comment">%kmol</span>
+MH = 18; <span class="comment">%kmol</span>
+
+Ycc = MC+MH/4;
+Y = Ycc;
+filename = [pwd <span class="string">'6.) MATLAB\1.) odu classes\3.) MAE 411\final\final.xlsx'</span>];
+
+<span class="comment">% Process 1-2</span>
+y_fuel = 1/(1+4.76*Y);
+y_air = 4.76*Y/(1+4.76*Y);
+
+n_tot = p1*V1/(R*t1);
+n_fuel = y_fuel*n_tot;
+n_air = y_air*n_tot;
+m_fuel = n_fuel*M_fuel;
+
+[a_air b_air] = deal(27.5, 0.0057);
+[a_fuel b_fuel] = deal(38.4, 0.429);
+phi = @(a,b,t1,t2) (a-R)*log(t2/t1)+b*(t2-t1);
+
+t2 = rv;
+<span class="keyword">for</span> k = 1:nrv
+  F = @(t2) y_air*phi(a_air,b_air,t1,t2)+<span class="keyword">...</span>
+            y_fuel*phi(a_fuel,b_fuel,t1,t2)+<span class="keyword">...</span>
+            R*log(1/rv(k));
+  t2(k) = fzero(F, 900);
+<span class="keyword">end</span>
+w12 = -n_fuel*((a_fuel-R)*(t2-t1)+b_fuel*(t2.^2-t1^2)/2)<span class="keyword">...</span>
+      -n_air*((a_air-R)*(t2-t1)+b_air*(t2.^2-t1^2)/2);
+
+<span class="comment">% Process 2-3</span>
+Urp_fuel = -5097780; <span class="comment">%kJ/kmol</span>
+Urp_CO_CO2 = 281400; <span class="comment">%kJ/kmol</span>
+
+N_CO = 0;
+N_CO2 = MC;
+N_H2O = MH/2;
+N_O2 = 0;
+N_N2 = 3.76*Ycc;
+sumN = N_CO+N_CO2+N_H2O+N_O2+N_N2;
+
+t3 = rv;
+<span class="keyword">for</span> k = 1:nrv
+  du = @(i,t3) h(i,t3)-h(i,t2(k))-R*(t3-t2(k));
+  F = @(t3) Urp_fuel+N_CO*(Urp_CO_CO2+du(1,t3))<span class="keyword">...</span>
+                    +N_CO2*du(2,t3)<span class="keyword">...</span>
+                    +N_H2O*du(3,t3)<span class="keyword">...</span>
+                    +N_O2*du(4,t3)<span class="keyword">...</span>
+                    +N_N2*du(5,t3);
+  t3(k) = fzero(F, 3000);
+<span class="keyword">end</span>
+n3n2 = sumN/(1+4.76*Y);
+
+<span class="comment">% Process 3-4</span>
+n2 = n_tot;
+n3 = n2*n3n2;
+
+y_CO = N_CO/sumN;
+y_CO2 = N_CO2/sumN;
+y_H2O = N_H2O/sumN;
+y_O2 = N_O2/sumN;
+y_N2 = N_N2/sumN;
+
+n_CO = y_CO*n3;
+n_CO2 = y_CO2*n3;
+n_H2O = y_H2O*n3;
+n_O2 = y_O2*n3;
+n_N2 = y_N2*n3;
+
+[t4 w34] = deal(rv);
+<span class="keyword">for</span> k = 1:nrv
+  dPhi = @(i,t4) Phi(i,t4)-Phi(i,t3(k));
+  dh = @(i,t4) h(i,t4)-h(i,t3(k))-R*(t4-t3(k));
+  F = @(t4) R*log(rv(k)*t3(k)/t4)+y_CO*dPhi(1,t4)<span class="keyword">...</span>
+                                 +y_CO2*dPhi(2,t4)<span class="keyword">...</span>
+                                 +y_H2O*dPhi(3,t4)<span class="keyword">...</span>
+                                 +y_O2*dPhi(4,t4)<span class="keyword">...</span>
+                                 +y_N2*dPhi(5,t4);
+  t4(k) = fzero(F, 1500);
+  w34(k) = -n_CO*dh(1,t4(k))<span class="keyword">...</span>
+           -n_CO2*dh(2,t4(k))<span class="keyword">...</span>
+           -n_H2O*dh(3,t4(k))<span class="keyword">...</span>
+           -n_O2*dh(4,t4(k))<span class="keyword">...</span>
+           -n_N2*dh(5,t4(k));
+<span class="keyword">end</span>
+
+<span class="comment">% Results</span>
+HV = 5097780; <span class="comment">%kJ/kmol fuel</span>
+pps = 25; <span class="comment">%power strokes/sec</span>
+
+wnet = (w12+w34)*pps;
+etath = wnet/(n_fuel*HV*pps);
+sfc = m_fuel*pps./wnet;
+
+data = [rv wnet etath sfc];
+xlswrite(filename, data, <span class="string">'part 2'</span>, <span class="string">'A2'</span>);
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Part 1
+
+% Given
+R = 8.31451; %kJ/kmol/K
+V1 = 0.0005; %m^3
+p1 = 100; %kPa
+t1 = 300; %K
+rv = 9;
+
+M_fuel = 114; %kg/kmol
+MC = 8; %kmol
+MH = 18; %kmol
+
+Ycc = MC+MH/4;
+Ymin = Ycc-MC/2;
+Y = (0.7:0.1:1.4)'*Ycc;
+nY = length(Y);
+filename = [pwd '6.) MATLAB\1.) odu classes\3.) MAE 411\final\final.xlsx']; 
+
+% Process 1-2
+y_fuel = 1./(1+4.76*Y);
+y_air = 4.76*Y./(1+4.76*Y);
+
+n_tot = p1*V1/(R*t1);
+n_fuel = y_fuel*n_tot;
+n_air = y_air*n_tot;
+m_fuel = n_fuel*M_fuel;
+
+[a_air b_air] = deal(27.5, 0.0057);
+[a_fuel b_fuel] = deal(38.4, 0.429);
+phi = @(a,b,t1,t2) (a-R)*log(t2/t1)+b*(t2-t1);
+
+t2 = Y;
+for k = 1:nY
+  F = @(t2) y_air(k)*phi(a_air,b_air,t1,t2)+...
+            y_fuel(k)*phi(a_fuel,b_fuel,t1,t2)+...
+            R*log(1/rv);
+  t2(k) = fzero(F, 900);
+end
+w12 = -n_fuel.*((a_fuel-R)*(t2-t1)+b_fuel*(t2.^2-t1^2)/2)...
+      -n_air.*((a_air-R)*(t2-t1)+b_air*(t2.^2-t1^2)/2);
+
+% Process 2-3
+Urp_fuel = -5097780; %kJ/kmol
+Urp_CO_CO2 = 281400; %kJ/kmol
+
+[N_CO N_CO2 N_H2O N_O2 N_N2] = deal(Y);
+N_CO(Y < Ycc) = 2*(Ycc-Y(Y < Ycc));
+N_CO2(Y < Ycc) = 2*(Y(Y < Ycc)-Ymin);
+N_H2O(Y < Ycc) = MH/2;
+N_O2(Y < Ycc) = 0;
+N_N2(Y < Ycc) = 3.76*Y(Y < Ycc);
+
+N_CO(Y == Ycc) = 0;
+N_CO2(Y == Ycc) = MC;
+N_H2O(Y == Ycc) = MH/2;
+N_O2(Y == Ycc) = 0;
+N_N2(Y == Ycc) = 3.76*Ycc;
+
+N_CO(Y > Ycc) = 0;
+N_CO2(Y > Ycc) = MC;
+N_H2O(Y > Ycc) = MH/2;
+N_O2(Y > Ycc) = Y(Y > Ycc)-Ycc;
+N_N2(Y > Ycc) = 3.76*Y(Y > Ycc);
+sumN = N_CO+N_CO2+N_H2O+N_O2+N_N2;
+
+t3 = Y;
+for k = 1:nY
+  du = @(i,t3) h(i,t3)-h(i,t2(k))-R*(t3-t2(k));  
+  F = @(t3) Urp_fuel+N_CO(k)*(Urp_CO_CO2+du(1,t3))...
+                    +N_CO2(k)*du(2,t3)...
+                    +N_H2O(k)*du(3,t3)...
+                    +N_O2(k)*du(4,t3)...
+                    +N_N2(k)*du(5,t3);
+  t3(k) = fzero(F, 3000);
+end
+n3n2 = sumN./(1+4.76*Y);
+
+% Process 3-4
+n2 = n_tot;
+n3 = n2*n3n2;
+
+y_CO = N_CO./sumN;
+y_CO2 = N_CO2./sumN;
+y_H2O = N_H2O./sumN;
+y_O2 = N_O2./sumN;
+y_N2 = N_N2./sumN;
+
+n_CO = y_CO.*n3;
+n_CO2 = y_CO2.*n3;
+n_H2O = y_H2O.*n3;
+n_O2 = y_O2.*n3;
+n_N2 = y_N2.*n3;
+
+[t4 w34] = deal(Y);
+for k = 1:nY
+  dPhi = @(i,t4) Phi(i,t4)-Phi(i,t3(k));
+  dh = @(i,t4) h(i,t4)-h(i,t3(k))-R*(t4-t3(k));
+  F = @(t4) R*log(rv*t3(k)/t4)+y_CO(k)*dPhi(1,t4)...
+                              +y_CO2(k)*dPhi(2,t4)...
+                              +y_H2O(k)*dPhi(3,t4)...
+                              +y_O2(k)*dPhi(4,t4)...
+                              +y_N2(k)*dPhi(5,t4);
+  t4(k) = fzero(F, 1500);
+  w34(k) = -n_CO(k)*dh(1,t4(k))...
+           -n_CO2(k)*dh(2,t4(k))...
+           -n_H2O(k)*dh(3,t4(k))...
+           -n_O2(k)*dh(4,t4(k))...
+           -n_N2(k)*dh(5,t4(k));
+end
+
+% Results
+HV = 5097780; %kJ/kmol fuel
+pps = 25; %power strokes/sec
+
+wnet = (w12+w34)*pps;
+etath = wnet./(n_fuel*HV*pps); 
+sfc = m_fuel*pps./wnet; 
+
+data = [Y/Ycc wnet etath sfc];
+xlswrite(filename, data, 'part 1', 'A2');
+
+%% Part 2
+
+% Given
+R = 8.31451; %kJ/kmol/K
+V1 = 0.0005; %m^3
+p1 = 100; %kPa
+t1 = 300; %K
+
+rv = (6.0:0.5:12.0)';
+nrv = length(rv);
+
+M_fuel = 114; %kg/kmol
+MC = 8; %kmol
+MH = 18; %kmol
+
+Ycc = MC+MH/4;
+Y = Ycc;
+filename = [pwd '6.) MATLAB\1.) odu classes\3.) MAE 411\final\final.xlsx']; 
+
+% Process 1-2
+y_fuel = 1/(1+4.76*Y);
+y_air = 4.76*Y/(1+4.76*Y);
+
+n_tot = p1*V1/(R*t1);
+n_fuel = y_fuel*n_tot;
+n_air = y_air*n_tot;
+m_fuel = n_fuel*M_fuel;
+
+[a_air b_air] = deal(27.5, 0.0057);
+[a_fuel b_fuel] = deal(38.4, 0.429);
+phi = @(a,b,t1,t2) (a-R)*log(t2/t1)+b*(t2-t1);
+
+t2 = rv;
+for k = 1:nrv
+  F = @(t2) y_air*phi(a_air,b_air,t1,t2)+...
+            y_fuel*phi(a_fuel,b_fuel,t1,t2)+...
+            R*log(1/rv(k));
+  t2(k) = fzero(F, 900);
+end
+w12 = -n_fuel*((a_fuel-R)*(t2-t1)+b_fuel*(t2.^2-t1^2)/2)...
+      -n_air*((a_air-R)*(t2-t1)+b_air*(t2.^2-t1^2)/2);
+
+% Process 2-3
+Urp_fuel = -5097780; %kJ/kmol
+Urp_CO_CO2 = 281400; %kJ/kmol
+
+N_CO = 0;
+N_CO2 = MC;
+N_H2O = MH/2;
+N_O2 = 0;
+N_N2 = 3.76*Ycc;
+sumN = N_CO+N_CO2+N_H2O+N_O2+N_N2;
+
+t3 = rv;
+for k = 1:nrv
+  du = @(i,t3) h(i,t3)-h(i,t2(k))-R*(t3-t2(k));  
+  F = @(t3) Urp_fuel+N_CO*(Urp_CO_CO2+du(1,t3))...
+                    +N_CO2*du(2,t3)...
+                    +N_H2O*du(3,t3)...
+                    +N_O2*du(4,t3)...
+                    +N_N2*du(5,t3);
+  t3(k) = fzero(F, 3000);
+end
+n3n2 = sumN/(1+4.76*Y);
+
+% Process 3-4
+n2 = n_tot;
+n3 = n2*n3n2;
+
+y_CO = N_CO/sumN;
+y_CO2 = N_CO2/sumN;
+y_H2O = N_H2O/sumN;
+y_O2 = N_O2/sumN;
+y_N2 = N_N2/sumN;
+
+n_CO = y_CO*n3;
+n_CO2 = y_CO2*n3;
+n_H2O = y_H2O*n3;
+n_O2 = y_O2*n3;
+n_N2 = y_N2*n3;
+
+[t4 w34] = deal(rv);
+for k = 1:nrv
+  dPhi = @(i,t4) Phi(i,t4)-Phi(i,t3(k));
+  dh = @(i,t4) h(i,t4)-h(i,t3(k))-R*(t4-t3(k));
+  F = @(t4) R*log(rv(k)*t3(k)/t4)+y_CO*dPhi(1,t4)...
+                                 +y_CO2*dPhi(2,t4)...
+                                 +y_H2O*dPhi(3,t4)...
+                                 +y_O2*dPhi(4,t4)...
+                                 +y_N2*dPhi(5,t4);
+  t4(k) = fzero(F, 1500);
+  w34(k) = -n_CO*dh(1,t4(k))...
+           -n_CO2*dh(2,t4(k))...
+           -n_H2O*dh(3,t4(k))...
+           -n_O2*dh(4,t4(k))...
+           -n_N2*dh(5,t4(k));
+end
+
+% Results
+HV = 5097780; %kJ/kmol fuel
+pps = 25; %power strokes/sec
+
+wnet = (w12+w34)*pps;
+etath = wnet/(n_fuel*HV*pps); 
+sfc = m_fuel*pps./wnet;
+
+data = [rv wnet etath sfc];
+xlswrite(filename, data, 'part 2', 'A2');
+##### SOURCE END #####
+--></body></html>
