@@ -1,0 +1,15 @@
+G = zpk([],[-1 -2 -10],1);
+req = req1('trans', {'zeta', 0.174}, 'ssef', 10);
+[Gun Tun un] = un1(G, req);
+[Glag Tlag lag] = lag1(G, req);
+[Glead Tlead lead] = lead1(G, req, 'leadzero', -2);
+[Glaglead Tlaglead laglead] = laglead1(G, req, 'leadzero', -2);
+t = 0:0.001:80';
+titlestr = {'Example 9.2', '', 'Step Response'};
+legendlist = {'un', 'lag'};
+plotlist1 = {'title', titlestr, 'legend', legendlist};
+plotlist2 = {'t', 0:0.001:80', 'legend', legendlist};
+subplot(2,1,1);
+req1.plot('step', Tun, Tlag, plotlist1{:});
+subplot(2,1,2);
+req1.plot('step', Tun, Tlag, plotlist2{:}, 'sse');

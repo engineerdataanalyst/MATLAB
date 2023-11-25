@@ -1,0 +1,13 @@
+G = 3.6*zpk([],[0 -36 -100],100);
+req = req2('trans', {'os', 9.5}, 'ssef', 10);
+[Gun Tun un] = un2(G, req);
+[Glag Tlag lag] = lag2(G, req);
+titlestr = {'Example 11.2', '', 'Step Response'};
+legendlist = {'un', 'lag'};
+plotlist1 = {'title', titlestr, 'legend', legendlist};
+plotlist2 = {'legend', legendlist};
+figure;
+subplot(2,1,1);
+req1.plot('step', Tun, Tlag, plotlist1{:});
+subplot(2,1,2);
+req1.plot('ramp', Tun, Tlag, plotlist2{:}, 'sse');
