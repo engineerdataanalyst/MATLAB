@@ -1,0 +1,346 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>project2</title><meta name="generator" content="MATLAB 8.3"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2014-11-14"><meta name="DC.source" content="project2.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#2">Analytical Solution</a></li><li><a href="#3">Crank Nicolson Method</a></li></ul></div><pre class="codeinput"><span class="comment">% MAE 315 Project 1</span>
+<span class="comment">% Group 5</span>
+<span class="comment">% 11/18/2015</span>
+
+<span class="comment">% given</span>
+Ti = 40; <span class="comment">%(F)</span>
+Tinf = 350; <span class="comment">%(F)</span>
+Tf = 165; <span class="comment">%(F)</span>
+thetaf = (Tf-Tinf)/(Ti-Tinf); <span class="comment">%dimensionless temperature</span>
+h = 12.5; <span class="comment">%Btu/hr-ft^2-F</span>
+k = 0.287; <span class="comment">%Btu/hr-ft-F</span>
+alpha = 1.40e-6; <span class="comment">%ft^2/s</span>
+r0 = 0.331; <span class="comment">%ft</span>
+Bi = h*r0/k;
+</pre><h2>Analytical Solution<a name="2"></a></h2><p>lambda values</p><pre class="codeinput">fb = @(x) 1-x.*cot(x)-Bi;
+lambda = zeros(6,1);
+lambda(1) = fzero(fb, 3);
+lambda(2) = fzero(fb, 6);
+lambda(3) = fzero(fb, 9);
+lambda(4) = fzero(fb, 12);
+lambda(5) = fzero(fb, 15);
+lambda(6) = fzero(fb, 18);
+
+<span class="comment">% series solution for center temperature</span>
+a = 4*(sin(lambda)-lambda.*cos(lambda))./(2*lambda-sin(2*lambda));
+fth1 = @(x) a(1)*exp(-lambda(1)^2*x)-thetaf;
+fth2 = @(x) fth1(x)+a(2)*exp(-lambda(2)^2*x);
+fth3 = @(x) fth2(x)+a(3)*exp(-lambda(3)^2*x);
+fth4 = @(x) fth3(x)+a(4)*exp(-lambda(4)^2*x);
+fth5 = @(x) fth4(x)+a(5)*exp(-lambda(5)^2*x);
+fth6 = @(x) fth5(x)+a(6)*exp(-lambda(6)^2*x);
+
+<span class="comment">% Fourier Numbers</span>
+tau = zeros(6,1);
+tau(1) = fzero(fth1, 0.1);
+tau(2) = fzero(fth2, 0.1);
+tau(3) = fzero(fth3, 0.1);
+tau(4) = fzero(fth4, 0.1);
+tau(5) = fzero(fth5, 0.1);
+tau(6) = fzero(fth6, 0.1);
+
+<span class="comment">% time values</span>
+time = tau*r0^2/alpha;
+
+<span class="comment">% plot</span>
+r = linspace(0, r0);
+t = [time(6) time(6)-2e3 time(6)-4e3 time(6)-6e3 time(6)-8e3 time(6)-9e3];
+figure;
+hold <span class="string">on</span>;
+<span class="keyword">for</span> j = 1:6
+  Fo = alpha*t(j)/r0^2;
+  theta = zeros(size(r));
+  <span class="keyword">for</span> k = 1:6
+    theta = theta+a(k)*exp(-lambda(k)^2*Fo)*sin(lambda(k)*r/r0)./(lambda(k)*r/r0);
+  <span class="keyword">end</span>
+  T = Tinf+(Ti-Tinf)*theta;
+  <span class="keyword">switch</span> j
+    <span class="keyword">case</span> 1
+      line = <span class="string">'b'</span>;
+    <span class="keyword">case</span> 2
+      line = <span class="string">'r'</span>;
+    <span class="keyword">case</span> 3
+      line = <span class="string">'m'</span>;
+    <span class="keyword">case</span> 4
+      line = <span class="string">'g'</span>;
+    <span class="keyword">case</span> 5
+      line = <span class="string">'y'</span>;
+    <span class="keyword">case</span> 6
+      line = <span class="string">'k'</span>;
+  <span class="keyword">end</span>
+  plot(r, T, line);
+<span class="keyword">end</span>
+plot(r, Ti*ones(length(r),1), <span class="string">'--k'</span>);
+</pre><img vspace="5" hspace="5" src="project2_01.png" alt=""> <h2>Crank Nicolson Method<a name="3"></a></h2><p>given</p><pre class="codeinput">dr = r0/10;
+dt = 1;
+lambda = alpha*dt/dr^2;
+n = 2e5; <span class="comment">%time levels</span>
+r = (0:dr:r0)';
+
+<span class="comment">% numerical calculations</span>
+T = zeros(11,n);
+a = zeros(11,11);
+b = zeros(11,11);
+c = zeros(11,1);
+
+T(1:11,1) = Ti; <span class="comment">%initial conditions</span>
+rhalf = zeros(10,1); <span class="comment">%half radii</span>
+<span class="keyword">for</span> j = 1:10
+  rhalf(j) = r(j)+0.5*dr;
+<span class="keyword">end</span>
+
+c(11,1) = 4*h*r(11)^2*dr/k*Tinf;
+<span class="keyword">for</span> j = 2:n
+<span class="comment">% calculating "a" matrix</span>
+  a(1,2) = -(rhalf(1)^2+r(1)^2);
+  a(1,1) = rhalf(1)^2+r(1)^2+2*r(1)^2/lambda;
+  <span class="keyword">for</span> k = 2:10
+    a(k,k+1) = -rhalf(k)^2;
+    a(k,k) = rhalf(k)^2+rhalf(k-1)^2+2*r(k)^2/lambda;
+    a(k,k-1) = -rhalf(k-1)^2;
+  <span class="keyword">end</span>
+  a(11,11) = 2*h*r(11)^2*dr/k+r(11)^2+rhalf(10)^2+2*r(11)^2/lambda;
+  a(11,10) = -(r(11)^2+rhalf(10)^2);
+<span class="comment">% calculating "b" matrix</span>
+  b(1,2) = rhalf(1)^2+r(1)^2;
+  b(1,1) = -(rhalf(1)^2+r(1)^2-2*r(1)^2/lambda);
+  <span class="keyword">for</span> k = 2:10
+    b(k,k+1) = rhalf(k)^2;
+    b(k,k) = -(rhalf(k)^2+rhalf(k-1)^2-2*r(k)^2/lambda);
+    b(k,k-1) = rhalf(k-1)^2;
+  <span class="keyword">end</span>
+  b(11,11) = -2*h*r(11)^2*dr/k-r(11)^2-rhalf(10)^2+2*r(11)^2/lambda;
+  b(11,10) = r(11)^2+rhalf(10)^2;
+<span class="comment">% calculating T</span>
+  T(1:11,j) = a\(b*T(1:11,j-1)+c);
+  <span class="keyword">if</span> T(1,j) &gt;= Tf
+    ifin = j;
+    <span class="keyword">break</span>;
+  <span class="keyword">end</span>
+<span class="keyword">end</span>
+
+<span class="comment">% plot</span>
+plot(r, T(1:11,ifin), <span class="string">'o'</span>);
+title(<span class="string">'Temperature vs Radius'</span>);
+xlabel(<span class="string">'r (ft)'</span>);
+ylabel(<span class="string">'T (F)'</span>);
+legend({sprintf(<span class="string">'Analytical (time: %.3f hours)'</span>, t(1)/3600)
+        sprintf(<span class="string">'Analytical (time: %.3f hours)'</span>, t(2)/3600)
+        sprintf(<span class="string">'Analytical (time: %.3f hours)'</span>, t(3)/3600)
+        sprintf(<span class="string">'Analytical (time: %.3f hours)'</span>, t(4)/3600)
+        sprintf(<span class="string">'Analytical (time: %.3f hours)'</span>, t(5)/3600)
+        sprintf(<span class="string">'Analytical (time: %.3f hours)'</span>, t(6)/3600)
+        sprintf(<span class="string">'Analytical (time: %.3f hours)'</span>, 0)
+        <span class="string">'Crank Nicolson'</span>});
+</pre><img vspace="5" hspace="5" src="project2_02.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2014a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+% MAE 315 Project 1
+% Group 5 
+% 11/18/2015
+
+% given
+Ti = 40; %(F)
+Tinf = 350; %(F)
+Tf = 165; %(F)
+thetaf = (Tf-Tinf)/(Ti-Tinf); %dimensionless temperature
+h = 12.5; %Btu/hr-ft^2-F
+k = 0.287; %Btu/hr-ft-F
+alpha = 1.40e-6; %ft^2/s
+r0 = 0.331; %ft
+Bi = h*r0/k;
+
+%% Analytical Solution
+% lambda values
+fb = @(x) 1-x.*cot(x)-Bi;
+lambda = zeros(6,1);
+lambda(1) = fzero(fb, 3);
+lambda(2) = fzero(fb, 6);
+lambda(3) = fzero(fb, 9);
+lambda(4) = fzero(fb, 12);
+lambda(5) = fzero(fb, 15);
+lambda(6) = fzero(fb, 18);
+ 
+% series solution for center temperature
+a = 4*(sin(lambda)-lambda.*cos(lambda))./(2*lambda-sin(2*lambda));
+fth1 = @(x) a(1)*exp(-lambda(1)^2*x)-thetaf;
+fth2 = @(x) fth1(x)+a(2)*exp(-lambda(2)^2*x);
+fth3 = @(x) fth2(x)+a(3)*exp(-lambda(3)^2*x);
+fth4 = @(x) fth3(x)+a(4)*exp(-lambda(4)^2*x);
+fth5 = @(x) fth4(x)+a(5)*exp(-lambda(5)^2*x);
+fth6 = @(x) fth5(x)+a(6)*exp(-lambda(6)^2*x);
+
+% Fourier Numbers
+tau = zeros(6,1);
+tau(1) = fzero(fth1, 0.1);
+tau(2) = fzero(fth2, 0.1);
+tau(3) = fzero(fth3, 0.1);
+tau(4) = fzero(fth4, 0.1);
+tau(5) = fzero(fth5, 0.1);
+tau(6) = fzero(fth6, 0.1);
+
+% time values
+time = tau*r0^2/alpha;
+
+% plot
+r = linspace(0, r0);
+t = [time(6) time(6)-2e3 time(6)-4e3 time(6)-6e3 time(6)-8e3 time(6)-9e3];
+figure;
+hold on;
+for j = 1:6
+  Fo = alpha*t(j)/r0^2;
+  theta = zeros(size(r));
+  for k = 1:6
+    theta = theta+a(k)*exp(-lambda(k)^2*Fo)*sin(lambda(k)*r/r0)./(lambda(k)*r/r0);
+  end    
+  T = Tinf+(Ti-Tinf)*theta;  
+  switch j
+    case 1
+      line = 'b';      
+    case 2
+      line = 'r';
+    case 3
+      line = 'm';
+    case 4
+      line = 'g';
+    case 5
+      line = 'y';
+    case 6
+      line = 'k';
+  end
+  plot(r, T, line);
+end
+plot(r, Ti*ones(length(r),1), 'REPLACE_WITH_DASH_DASHk');
+
+%% Crank Nicolson Method
+% given
+dr = r0/10;
+dt = 1;
+lambda = alpha*dt/dr^2;
+n = 2e5; %time levels
+r = (0:dr:r0)';
+
+% numerical calculations
+T = zeros(11,n);
+a = zeros(11,11);
+b = zeros(11,11);
+c = zeros(11,1);
+
+T(1:11,1) = Ti; %initial conditions
+rhalf = zeros(10,1); %half radii
+for j = 1:10
+  rhalf(j) = r(j)+0.5*dr;  
+end
+
+c(11,1) = 4*h*r(11)^2*dr/k*Tinf;
+for j = 2:n
+% calculating "a" matrix  
+  a(1,2) = -(rhalf(1)^2+r(1)^2);
+  a(1,1) = rhalf(1)^2+r(1)^2+2*r(1)^2/lambda;    
+  for k = 2:10
+    a(k,k+1) = -rhalf(k)^2;
+    a(k,k) = rhalf(k)^2+rhalf(k-1)^2+2*r(k)^2/lambda;
+    a(k,k-1) = -rhalf(k-1)^2;    
+  end
+  a(11,11) = 2*h*r(11)^2*dr/k+r(11)^2+rhalf(10)^2+2*r(11)^2/lambda;
+  a(11,10) = -(r(11)^2+rhalf(10)^2);
+% calculating "b" matrix
+  b(1,2) = rhalf(1)^2+r(1)^2;
+  b(1,1) = -(rhalf(1)^2+r(1)^2-2*r(1)^2/lambda);
+  for k = 2:10
+    b(k,k+1) = rhalf(k)^2;
+    b(k,k) = -(rhalf(k)^2+rhalf(k-1)^2-2*r(k)^2/lambda);
+    b(k,k-1) = rhalf(k-1)^2;    
+  end
+  b(11,11) = -2*h*r(11)^2*dr/k-r(11)^2-rhalf(10)^2+2*r(11)^2/lambda;
+  b(11,10) = r(11)^2+rhalf(10)^2;
+% calculating T
+  T(1:11,j) = a\(b*T(1:11,j-1)+c);  
+  if T(1,j) >= Tf
+    ifin = j;
+    break;
+  end  
+end
+
+% plot
+plot(r, T(1:11,ifin), 'o');
+title('Temperature vs Radius');
+xlabel('r (ft)');
+ylabel('T (F)');
+legend({sprintf('Analytical (time: %.3f hours)', t(1)/3600)
+        sprintf('Analytical (time: %.3f hours)', t(2)/3600)
+        sprintf('Analytical (time: %.3f hours)', t(3)/3600)
+        sprintf('Analytical (time: %.3f hours)', t(4)/3600)
+        sprintf('Analytical (time: %.3f hours)', t(5)/3600)
+        sprintf('Analytical (time: %.3f hours)', t(6)/3600)
+        sprintf('Analytical (time: %.3f hours)', 0)
+        'Crank Nicolson'});
+##### SOURCE END #####
+--></body></html>
